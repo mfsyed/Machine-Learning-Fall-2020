@@ -1,0 +1,117 @@
+def perceptron(data, labels, params={}, hook=None):
+    # if T not in params, default to 100
+    T = params.get('T', 100)
+
+    # Your implementation here
+    n = labels.shape[1]
+    d = data.shape[0]
+    theta = np.zeros((d,1))
+    theta_0 = np.array([[0]])
+    for i in range(T):
+      changed = False
+      for i in range(n):
+        x = np.dot(theta.T, data[:,i:i+1])
+        if np.sum((labels[:,i:i+1]*(x + theta_0))) <= 0:
+          y = labels[:,i:i+1]*data[:,i:i+1]
+          theta = theta + (labels[:,i:i+1]*data[:,i:i+1])
+          theta_0 = theta_0 + labels[:,i:i+1]
+          changed = True
+      if not changed:
+        break
+    return (theta, theta_0)
+    
+    
+def averaged_perceptron(data, labels, params={}, hook=None):
+    # if T not in params, default to 100
+    T = params.get('T', 100)
+
+    # Your implementation here
+    n = labels.shape[1]
+    d = data.shape[0]
+    theta = np.zeros((d,1))
+    theta_0 = np.array([[0]])
+    ths = np.zeros((d,1))
+    th0s = np.array([[0]])
+    for i in range(T):
+      for i in range(n):
+        x = np.dot(theta.T, data[:,i:i+1])
+        if np.sum((labels[:,i:i+1]*(x + theta_0))) <= 0:
+          y = labels[:,i:i+1]*data[:,i:i+1]
+          theta = theta + (labels[:,i:i+1]*data[:,i:i+1])
+          theta_0 = theta_0 + labels[:,i:i+1]
+        ths = ths + theta
+        th0s = th0s + theta_0
+    return (ths/(n*T), th0s/(n*T))
+    
+
+
+
+def eval_classifier(learner, data_train, labels_train, data_test, labels_test):
+    clath = learner(data_train,labels_train)
+    tr = score(data_test,labels_test,clath[0],clath[1])
+    return tr/len(data_test[0])
+
+
+
+
+
+
+import numpy as np
+
+def eval_learning_alg(learner, data_gen, n_train, n_test, it):
+    iterations = it
+    total = 0
+    
+    
+    while iterations > 0:
+        
+        test = data_gen(n_test)
+        data_test = test[0]
+        labels_test = test[1]
+        train = data_gen(n_train)
+        data_train = train[0]
+        labels_train = train[1]
+        
+        
+        total += eval_classifier(learner, data_test, labels_test, data_train, labels_train)
+        iterations -= 1
+        
+        
+    return total/(it)
+  
+  
+
+
+
+def xval_learning_alg(learner, data, labels, k):
+    # Cross validation of learning algorithm
+    # Your implementation here
+    x = np.array_split(data, k, axis = 1)
+    y = np.array_split(labels, k, axis = 1)
+    final_score = 0
+    for j in range(k):
+      if j == 0:
+        D_minus_j = np.concatenate((x[j+1:]), axis = 1)
+        labels_j = np.concatenate((y[j+1:]), axis = 1)
+
+        D_j = x[0]
+        l_j = y[0]
+        final_score += eval_classifier(learner, D_minus_j, labels_j, D_j, l_j)
+
+      elif j < k-1:
+        D_minus_j = np.concatenate((x[0:j] + x[j+1:]), axis = 1)
+        labels_j = np.concatenate((y[0:j] + y[j+1:]), axis = 1)
+
+        D_j = x[j]
+        l_j = y[j]
+        final_score += eval_classifier(learner, D_minus_j, labels_j, D_j, l_j)
+
+      else:
+        D_minus_j = np.concatenate((x[0:j]), axis = 1)
+        labels_j = np.concatenate((y[0:j]), axis = 1)
+
+        D_j = x[j]
+        l_j = y[j]
+        final_score += eval_classifier(learner, D_minus_j, labels_j, D_j, l_j)
+
+    return final_score/k
