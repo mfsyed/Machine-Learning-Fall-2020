@@ -1,0 +1,38 @@
+import numpy as np
+
+def row_average_features(x):
+    """
+    @param x (m,n) array with values in (0,1)
+    @return (m,1) array where each entry is the average of a row
+    """
+    ave = np.array([np.mean(x,axis = 1)]).T
+    
+    return ave
+
+def col_average_features(x):
+    """
+    @param x (m,n) array with values in (0,1)
+    @return (n,1) array where each entry is the average of a column
+    """
+    ave = np.array([np.mean(x,axis = 0)]).T
+
+    return ave
+    
+
+
+def top_bottom_features(x):
+    """
+    @param x (m,n) array with values in (0,1)
+    @return (2,1) array where the first entry is the average of the
+    top half of the image = rows 0 to floor(m/2) [exclusive]
+    and the second entry is the average of the bottom half of the image
+    = rows floor(m/2) [inclusive] to m
+    """
+    y= x
+    m = np.shape(y)[0]
+    top = y[0:m//2]
+    bottom = y[m//2:m+1]
+    t = np.mean(top)
+    b =np.mean(bottom)
+    
+    return np.array([[t],[b]])
