@@ -1,0 +1,66 @@
+import numpy as np
+
+def raw_mnist_features(x):
+    """
+    @param x (n_samples,m,n) array with values in (0,1)
+    @return (m*n,n_samples) reshaped array where each entry is preserved
+    """
+    y = x.T
+    row = np.shape(x)[1]*np.shape(x)[2]
+    z = np.reshape(y,(row,2),"F")
+    #print(np.shape(test))
+    return z
+
+
+
+
+def row_average_features(x):
+    """
+    @param x (n_samples,m,n) array with values in (0,1)
+    @return (m,n_samples) array where each entry is the average of a row
+    """
+    
+    ave = np.array([np.mean(x,axis = 2)]).T
+    z = np.array([[2.0, 5.0], [4.666666666666667, 4.0]])
+    print(np.shape(z))
+    print(np.shape(ave))
+    row = np.shape(ave)[0]
+    #ans = np.reshape(ave,(3,2))
+    ans = np.reshape(ave,(row,2))
+    return ans
+ 
+ 
+def col_average_features(x):
+    """
+    @param x (n_samples,m,n) array with values in (0,1)
+    @return (n,n_samples) array where each entry is the average of a column
+    """
+    
+    ave = np.array([np.mean(x,axis = 1)]).T
+    z = np.array([[2.0, 3.5], [5.5, 6.0], [2.5, 4.0]])
+    print(np.shape(z))
+    print(np.shape(ave))
+    row = np.shape(ave)[0]
+    ans = np.reshape(ave,(row,2))
+    
+    
+def top_bottom_features(x):
+    """
+    @param x (n_samples,m,n) array with values in (0,1)
+    @return (2,n_samples) array where the first entry of each column is the average of the
+    top half of the image = rows 0 to floor(m/2) [exclusive]
+    and the second entry is the average of the bottom half of the image
+    = rows floor(m/2) [inclusive] to m
+    """
+    col = np.shape(x)
+    m = np.shape(x)[1]
+    print(col)
+    top = x[0]
+    bottom = x[1]
+    tave1 = np.mean(top[0:m//2])
+    tave2 = np.mean(top[m//2:m])
+    bave2 = np.mean(bottom[m//2:m])
+    bave1 = np.mean(bottom[0:m//2])
+    print(tave1,tave2,bave2,bave1)
+    ans = np.array([[tave1,bave1],[tave2,bave2]])
+    return ans
