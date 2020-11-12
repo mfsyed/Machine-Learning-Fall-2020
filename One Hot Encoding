@@ -1,0 +1,6 @@
+import numpy as np
+
+def one_hot(x, k):
+    features = [[0] for i in range(k)]
+    features[x-1] = [1]
+    return np.array(features)
