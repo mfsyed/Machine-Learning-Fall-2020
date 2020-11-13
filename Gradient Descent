@@ -1,0 +1,41 @@
+def gd(f, df, x0, step_size_fn, num_steps):
+    step_size = step_size_fn(num_steps)
+    while num_steps>0:
+      x0 -= df(x0)*step_size
+      num_steps -= 1
+
+    finaly = f(x0)
+
+    return (x0,finaly)
+    
+    
+def num_grad(f, delta=0.001):
+    answer = []
+    def df(x):
+        shape = np.shape(x)
+        xcpy = x.copy()
+        xcpy2 = x.copy()
+        final = np.zeros(shape)
+        for i in range(shape[0]):
+            xcpy[i,0] += delta
+            xcpy2[i,0] -= delta
+            divide = 2*delta
+            final[i,0] = (f(xcpy)-f(xcpy2))/divide
+            xcpy[i,0] -= delta
+            xcpy2[i,0] += delta
+        return final
+    return df
+    
+    
+    
+    def minimize(f, x0, step_size_fn, num_steps):
+    """
+    Parameters:
+      See definitions in part 1
+    Returns:
+      same output as gd
+    """
+    df = num_grad(f, delta=0.001)
+    answer = gd(f, df, x0, step_size_fn, num_steps)
+    
+    return answer
