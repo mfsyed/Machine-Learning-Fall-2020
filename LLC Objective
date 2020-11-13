@@ -1,0 +1,89 @@
+# z is a column vector
+# returns a vector of the same shape as z
+def sigmoid(z):
+    sig = 1/(1+np.exp(-z))
+    return sig
+
+# X is dxn, y is 1xn, th is dx1, th0 is 1x1
+# returns a (1,n) array for the nll loss for each data point given th and th0 
+def nll_loss(X, y, th, th0):
+    guess = np.dot(th.T,X)+th0
+    sig = sigmoid(guess)
+    nll = -(y*np.log(sig)+(1-y)*np.log(1-sig))
+    return nll
+# X is dxn, y is 1xn, th is dx1, th0 is 1x1, lam is a scalar
+# returns a np.float for the llc objective over the dataset
+def llc_obj(X, y, th, th0, lam):
+    n = y.shape[1]
+    llc = (1/n)*nll_loss(X,y,th,th0)
+    llc_sum = np.sum(llc) + lam*(np.linalg.norm(th)**2)
+    return llc_sum
+
+
+
+# returns an array of the same shape as z for the gradient of sigmoid(z)
+def d_sigmoid(z):
+    o = sigmoid(z)
+    return o - o**2
+
+# returns a (d,n) array for the gradient of nll_loss(X, y, th, th0) with respect to th for each data point
+def d_nll_loss_th(X, y, th, th0):
+    guess = np.dot(th.T,X) + th0
+    sig = sigmoid(guess)
+    return (sig-y)*X
+
+# returns a (1,n) array for the gradient of nll_loss(X, y, th, th0) with respect to th0
+def d_nll_loss_th0(X, y, th, th0):
+    guess = np.dot(th.T,X) + th0
+    sig = sigmoid(guess)
+    return (sig-y)
+
+# returns a (d,1) array for the gradient of llc_obj(X, y, th, th0) with respect to th
+def d_llc_obj_th(X, y, th, th0, lam):
+    n = X.shape[1]
+    llc = (1/n)*d_nll_loss_th(X,y,th,th0)
+    llc_sum = np.sum(llc,axis =1, keepdims=True) + 2*lam*((th))
+    return llc_sum
+
+# returns a (1,1) array for the gradient of llc_obj(X, y, th, th0) with respect to th0
+def d_llc_obj_th0(X, y, th, th0, lam):
+    n = X.shape[1]
+    llc = (1/n)*d_nll_loss_th0(X,y,th,th0)
+    llc_sum = np.sum(llc,axis =1, keepdims=True)
+    return llc_sum
+# returns a (d+1, 1) array for the full gradient as a single vector (which includes both th, th0)
+def llc_obj_grad(X, y, th, th0, lam):
+    first = d_llc_obj_th(X,y,th,th0,lam)
+    second = d_llc_obj_th0(X,y,th,th0,lam)
+    final = np.vstack((first,second))
+    return final
+    
+    
+    
+    
+    
+    
+    
+    
+def llc_min(data, labels, lam):
+    """
+    Parameters:
+        data: dxn
+        labels: 1xn
+        lam: scalar
+    Returns:
+        same output as gd
+    """
+    def llc_min_step_size_fn(i):
+       return 2/(i+1)**0.5
+    
+    zero = np.zeros((data.shape[0]+1,1))
+    
+    def f(th):
+        return llc_obj(data,labels,th[:-1,:],th[-1:,:],lam)
+        
+    def df(th):
+        return llc_obj_grad(data,labels,th[:-1,:],th[-1:,:],lam)
+    
+    return gd(f,df,zero,llc_min_step_size_fn,10)
+    
