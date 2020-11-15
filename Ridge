@@ -1,0 +1,7 @@
+def d_ridge_obj_th(x, y, th, th0, lam):
+    reg = 2*lam * th
+    return np.mean(d_square_loss_th(x, y, th, th0), axis = 1, keepdims = True) + reg
+
+def d_ridge_obj_th0(x, y, th, th0, lam):
+    reg = 2*lam * th
+    return np.mean(d_square_loss_th0(x, y, th, th0), axis = 1, keepdims = True)
