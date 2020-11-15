@@ -1,0 +1,16 @@
+import random
+def sgd(X, y, J, dJ, w0, step_size_fn, max_iter):
+    fs = []
+    ws = []
+    curr_w = w0
+    for i in range(max_iter):
+        ws.append(curr_w)
+        num = np.random.randint(y.shape[1])
+        val_X = np.array([X[:, num]])
+        val_y = np.array([y[:, num]])
+        f = J(val_X.T, val_y.T, curr_w)
+        g = step_size_fn(i)*dJ(val_X.T, val_y.T, curr_w)
+        fs.append(f)
+        new_w = curr_w[:,:] - g
+        curr_w = new_w
+    return (curr_w, fs, ws)
