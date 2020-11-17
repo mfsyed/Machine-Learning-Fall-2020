@@ -1,0 +1,2 @@
+def dReLU_dz(z):
+    return np.where(z > 0,1,0)
