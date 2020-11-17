@@ -1,0 +1,9 @@
+class Tanh(Module):            # Layer activation
+    def forward(self, Z):
+        self.A = np.tanh(Z)            # Your code
+        return self.A
+
+    def backward(self, dLdA): # Uses stored self.A
+        ones = np.array([[1 for i in range(np.shape(self.A)[1])]])
+        return dLdA*(ones-self.A**2)      # Your code: return dLdZ
+    
