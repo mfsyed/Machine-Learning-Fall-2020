@@ -1,0 +1,43 @@
+class Sequential:
+    def __init__(self, modules, loss):            # List of modules, loss module
+        self.modules = modules
+        self.loss = loss
+
+    def sgd(self, X, Y, iters=100, lrate=0.005):  # Train
+        D, N = X.shape
+        self.X = X
+        self.Y = Y
+        sum_loss = 0
+        for it in range(iters):
+            random_point = np.random.randint(0,N)
+            yt = np.array([self.Y[:,random_point]])
+            xt = np.array([self.X[:,random_point]])
+            Ypred = self.forward(xt.T)
+            
+            loss = self.loss.forward(Ypred,yt.T)
+            
+            dLdZ = self.loss.backward()
+            grad = self.backward(dLdZ)
+            self.sgd_step(lrate)
+        return X
+
+    def forward(self, Xt):                        # Compute Ypred
+        for m in self.modules: Xt = m.forward(Xt)
+        return Xt
+
+    def backward(self, delta):                    # Update dLdW and dLdW0
+        # Note reversed list of modules
+        for m in self.modules[::-1]: delta = m.backward(delta)
+
+    def sgd_step(self, lrate):                    # Gradient descent step
+        for m in self.modules: m.sgd_step(lrate)
+
+    def print_accuracy(self, it, X, Y, cur_loss, every=250):
+        # Utility method to print accuracy on full dataset, should
+        # improve over time when doing SGD. Also prints current loss,
+        # which should decrease over time. Call this on each iteration
+        # of SGD!
+        if it % every == 1:
+            cf = self.modules[-1].class_fun
+            acc = np.mean(cf(self.forward(X)) == cf(Y))
+            print('Iteration =', it, '	Acc =', acc, '	Loss =', cur_loss)
