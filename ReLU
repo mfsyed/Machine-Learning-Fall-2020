@@ -1,0 +1,10 @@
+class ReLU(Module):              # Layer activation
+    def forward(self, Z):
+        self.A = np.maximum(0, Z)           # Your code
+        return self.A
+
+    def backward(self, dLdA): # uses stored self.A
+        #print(self.A)
+        #print(dLdA)
+        return dLdA            # Your code: return dLdZ
+    
