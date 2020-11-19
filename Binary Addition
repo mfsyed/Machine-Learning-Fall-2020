@@ -1,0 +1,17 @@
+class Binary_Addition(SM):
+    start_state = (0,0) # Change
+
+    def transition_fn(self, s, x):
+        # Your code here
+        if sum(x) + s[1] == 0:
+            return (0,0)
+        elif sum(x) + s[1] == 1:
+            return (1,0)
+        elif sum(x) + s[1] == 2:
+            return (0,1)
+        return (1,1)
+        
+
+    def output_fn(self, s):
+        # Your code here
+        return s[0]
