@@ -1,0 +1,24 @@
+def value_iteration(mdp, q, eps = 0.01, max_iters=1000):
+    # Your code here
+    def value_2(s):
+        return value(q,s)
+    
+    while max_iters:
+        q_new = q.copy()
+        maximum = -float('inf')
+        
+        for s in q.states:
+            for a in q.actions:
+                v = mdp.reward_fn(s,a)+mdp.discount_factor*mdp.transition_model(s,a).expectation(value_2)
+                q_new.set(s,a,v)
+                
+                if abs(q_new.get(s,a)-q.get(s,a))>maximum:
+                    maximum = abs(q_new.get(s,a)-q.get(s,a))
+        
+        if maximum < eps:
+            return q_new
+        
+        q = q_new.copy()
+        max_iters -= 1
+    
+    return q
