@@ -1,0 +1,22 @@
+def epsilon_greedy(q, s, eps = 0.5):
+    """ Returns an action.
+
+    >>> q = TabularQ([0,1,2,3],['b','c'])
+    >>> q.set(0, 'b', 5)
+    >>> q.set(0, 'c', 10)
+    >>> q.set(1, 'b', 2)
+    >>> eps = 0.
+    >>> epsilon_greedy(q, 0, eps) #greedy
+    'c'
+    >>> epsilon_greedy(q, 1, eps) #greedy
+    'b'
+    """
+    # if random.random() < eps:  # True with prob eps, random action
+    #     # Your code here
+    # else:
+    #     # Your code here
+    
+    if random.random() < eps:
+        return uniform_dist(q.actions).draw()
+    return greedy(q,s)
+    
