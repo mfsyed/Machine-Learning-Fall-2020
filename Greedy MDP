@@ -1,0 +1,2 @@
+def greedy(q, s):
+    return argmax(q.actions, lambda a: q.get(s, a))
