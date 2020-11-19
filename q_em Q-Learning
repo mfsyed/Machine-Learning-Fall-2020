@@ -1,0 +1,17 @@
+def q_em(mdp, s, a, h):
+    # Your code here
+    if h == 0:
+        return 0
+        
+    next_value = 0
+    
+    for ns,np in mdp.transition_model(s,a).getAllProbs():
+        q_vals = []
+        for na in mdp.actions:
+            new_qval = q_em(mdp, ns, na, h-1)
+            q_vals.append(new_qval)
+        
+        next_value += np*max(q_vals)
+            
+    num = mdp.discount_factor*next_value + mdp.reward_fn(s,a)
+    return num
