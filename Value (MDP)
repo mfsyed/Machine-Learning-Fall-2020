@@ -1,0 +1,2 @@
+def value(q, s):
+    return max(q.get(s, a) for a in q.actions)
