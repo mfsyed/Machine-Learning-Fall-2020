@@ -1,0 +1,18 @@
+class SM:
+    start_state = None
+
+    def transduce(self, input_seq):
+        '''input_seq: a list of inputs to feed into SM
+           returns:   a list of outputs of SM'''
+        
+        # if len(input_seq) < 2:
+        #     return input_seq
+        
+        ans = []
+        total = 0
+        
+        for number in input_seq:
+            total += number
+            ans.append(total)
+        
+        return ans
