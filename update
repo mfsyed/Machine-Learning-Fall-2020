@@ -1,0 +1,11 @@
+def update(self, data, lr):
+    # Your code here
+    for tup in data:
+        qsa = (tup[0],tup[1])
+        t = tup[2]
+        
+        self.q[qsa] += lr*(t-self.q[qsa]) 
+        
+    # print(self.q)
+    # print(data)
+    # print(lr)
