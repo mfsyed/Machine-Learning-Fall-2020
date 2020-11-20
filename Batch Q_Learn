@@ -1,0 +1,26 @@
+def Q_learn_batch(mdp, q, lr=.1, iters=100, eps=0.5,
+                                   episode_length=10, n_episodes=2,
+                  interactive_fn=None):
+    # Your code here
+    all_experiences = []
+    for i in range(iters):
+        # include this line in the iteration, where i is the iteration number
+        if interactive_fn: interactive_fn(q, i)
+        for _ in range(n_episodes):
+            explore = lambda s: epsilon_greedy(q,s,eps)
+            r, episode,animation = sim_episode(mdp,episode_length, explore,draw=False)
+            all_experiences.extend(episode)
+        
+        
+        all_q_targets = []
+        for tuples in all_experiences:
+            if mdp.terminal(tuples[0]):
+                max_Q = 0
+            else:
+                max_Q = value(q,tuples[3])
+            t = (tuples[2]+mdp.discount_factor*max_Q)
+            all_q_targets.append((tuples[0],tuples[1],t))
+    
+        q.update(all_q_targets,lr)
+        
+    return q
