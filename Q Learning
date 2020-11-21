@@ -1,0 +1,16 @@
+def Q_learn(mdp, q, lr=.1, iters=100, eps = 0.5, interactive_fn=None):
+    # Your code here
+
+    state = mdp.init_state()
+    for i in range(iters):
+        if interactive_fn: interactive_fn(q, i) # don't touch this line
+        action = epsilon_greedy(q,state,eps)
+        r, new_state= mdp.sim_transition(state,action)
+        if mdp.terminal(state):
+            max_Q = 0
+        else:
+            max_Q=value(q,new_state)
+        t = (r+mdp.discount_factor*max_Q)
+        q.update([(state,action,t)],lr)
+        state = new_state
+    return q
